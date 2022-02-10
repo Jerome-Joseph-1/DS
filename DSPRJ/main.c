@@ -5,7 +5,11 @@
 #include<unistd.h>
 #include<ctype.h>
 
+#define MAX 100000
+
 char chp;
+void capitalize();
+void add();
 
 struct word_node{
     char word[100];
@@ -17,6 +21,23 @@ struct word_node{
 typedef struct word_node WORD;
 
 WORD* root = NULL;
+
+WORD* stack[MAX];
+int top = -1;
+
+void push(WORD* temp){
+    if(top == MAX-1) return;
+    stack[++top] = temp;
+}
+
+WORD* pop(){
+    if(top == -1) return NULL;
+    return stack[top--];
+}
+
+int stack_empty(){
+    return (top == -1)?1:0;
+}
 
 WORD* make_word(){
     WORD* node = (WORD*)malloc(sizeof(WORD));
@@ -37,6 +58,29 @@ int spaces(char s[]){
 }
 
 
+void search(char* wrd){
+    WORD* cur = root;
+    
+    capitalize(wrd);
+
+    while(cur && strcmp(cur->word, wrd)){
+        if(strcmp(cur->word, wrd) > 0) cur = cur->left;
+        else cur = cur->right;
+    }
+
+    if(cur){
+        printf("\n:::: WORD FOUND ::::\n");
+        printf("Meaning : \n%s", cur->description);
+    }
+    else{
+        char choice;
+        printf("\n:::: Word Not Found ::::\n");
+        printf("Would You Like To Add This Word ? (y/n) : ");
+        scanf(" %c", &choice);
+        if((choice == 'y') ||(choice == 'Y')) add();
+        else return;
+    }
+}
 
 
 void add_bst(WORD* temp){
@@ -61,7 +105,7 @@ void add_bst(WORD* temp){
         }
         if(cur){
             printf("\n!!! Word Already Exists !!!\n");
-            free(temp);
+            search(temp->word);
         }
         else{
             if(strcmp(temp->word, prev->word) > 0){
@@ -109,34 +153,6 @@ void add(){
     add_bst(new_word); // traverse(); --> check if word already exists if not attach at end
 }
 
-void search(){
-    WORD* cur = root;
-
-    char wrd[100];
-    printf("NOTE:NO SPACES ALLOWED\nEnter Word : ");
-    __fpurge(stdin);
-    fgets(wrd, 100, stdin);
-    wrd[strlen(wrd)-1] = '\0';
-    capitalize(wrd);
-
-    while(cur && strcmp(cur->word, wrd)){
-        if(strcmp(cur->word, wrd) > 0) cur = cur->left;
-        else cur = cur->right;
-    }
-
-    if(cur){
-        printf("\n:::: WORD FOUND ::::\n");
-        printf("Meaning : \n%s", cur->description);
-    }
-    else{
-        char choice;
-        printf("\n:::: Word Not Found ::::\n");
-        printf("Would You Like To Add This Word ? (y/n) : ");
-        scanf(" %c", &choice);
-        if((choice == 'y') ||(choice == 'Y')) add();
-        else return;
-    }
-}
 
 void create_bst(WORD* temp){
     if(!root){
@@ -185,47 +201,99 @@ void read_file(){
             new_word->word[i] = '\0';
             chp = fgetc(fptr);
             while(chp != '%'){
-                new_word->description[j++];
+                new_word->description[j++] = chp;
                 chp = fgetc(fptr);
             }
             new_word->description[j] = '\0';
-
+            // printf("%s = %s\n", new_word->word, new_word->description);
             create_bst(new_word);
         }
     }while(chp != EOF);
+    fclose(fptr);
 }
 
 void attach_to_file(){
+    FILE *fptr = fopen("dictionary.txt", "w");
 
+    push(root);
+    while(!stack_empty()){
+        WORD* temp = pop();
+        fputc('&', fptr);
+        fputs(temp->word, fptr);
+        fputc(':', fptr);
+        fputs(temp->description, fptr);
+        fputc('%', fptr);
+        if(temp->right) push(temp->right);
+        if(temp->left) push(temp->left);
+    }
+    fclose(fptr);
 }
+
+void update(char* wrd){
+    WORD* cur = root;
+    
+    capitalize(wrd);
+
+    while(cur && strcmp(cur->word, wrd)){
+        if(strcmp(cur->word, wrd) > 0) cur = cur->left;
+        else cur = cur->right;
+    }
+
+    if(cur){
+        printf("Enter Updated Details : \n");
+        printf("Enter Description : ");
+        __fpurge(stdin);
+        fgets(cur->description, 1000, stdin);
+        cur->description[strlen(cur->description)-1] = '\0';
+
+        printf("\nUpdated\n");
+    }
+
+    else{
+        printf("\nWORD NOT FOUND\n");
+    }
+}
+
 
 int main()
 {
-    int choice, tme = 2, p = 0;
+    int choice, tme = 500000, p = 0;
     read_file();
     while(1){
-        printf("\n\n1.Add New Word\n2.Search\n3.Update Word Description\n4.Exit\nEnter Choice : ");
+        char wrd[100];
+        printf("\n\n1.Add New Word\n2.Search\n3.Update Word Description\n4.Save and Exit\nEnter Choice : ");
         if(scanf("%d", &choice) == 1){
             switch(choice){
             case 1: add();break;
-            case 2: search();break;
-            // case 3: delete();break;
-            // case 3: update();break;
-            case 4: //attach_to_file();
+            case 2:
+            printf("NOTE:NO SPACES ALLOWED\nEnter Word : ");
+            __fpurge(stdin);
+            fgets(wrd, 100, stdin);
+            wrd[strlen(wrd)-1] = '\0';
+            search(wrd);
+            break;
+            case 3: 
+            printf("NOTE:NO SPACES ALLOWED\nEnter Word : ");
+            __fpurge(stdin);
+            fgets(wrd, 100, stdin);
+            wrd[strlen(wrd)-1] = '\0';
+            update(wrd);
+            break;
+            case 4: attach_to_file();
                     sleep(0.5); 
                     system("clear");
                     printf("Updating Dictionary .\n");
-                    sleep(1); 
+                    usleep(tme); 
                     system("clear"); 
                     printf("Updating Dictionary ..\n");
-                    sleep(1); 
+                    usleep(tme); 
                     system("clear"); 
                     printf("Updating Dictionary ...\n");
-                    sleep(1); 
+                    usleep(tme); 
                     system("clear"); 
                     printf("Updating Dictionary ....\n");
                     
-                    printf("UPDATED!");
+                    printf("UPDATED!\n");
                     return 0;
             default: printf("Enter choices from 1 - 5 ONLY !");
             }
