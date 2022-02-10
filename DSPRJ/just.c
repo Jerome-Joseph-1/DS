@@ -1,3 +1,9 @@
+// TEST CODE 
+// NOT THE PROJECT CODE
+// CHECK MAIN.C FOR PROJECT
+// U CAN CLOSE THIS
+
+
 #include<stdio.h>
 #include<stdlib.h>
 #include<string.h>
