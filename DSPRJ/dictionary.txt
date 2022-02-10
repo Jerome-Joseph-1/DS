@@ -1,0 +1,1 @@
+&HELLO:Greet Someone%&SAYONARA:Goodbye%&RANDOM:somethinf unknown%&NOTHING:emptiness%&PARTY:enjoyment%
