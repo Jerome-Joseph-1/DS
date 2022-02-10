@@ -1,1 +1,3 @@
-&HELLO:Greet Someone%&SAYONARA:Goodbye%&RANDOM:somethinf unknown%&NOTHING:emptiness%&PARTY:enjoyment%
+&HELLO:Greet Someone%&SAYONARA:Goodbye%&RANDOM:Something Unknown%&NOTHING:emptiness%&LANGUAGE:converse
+%&PARTY:enjoyment%&POKEMON:pocket monster, a popular game/animated series in the 20th centuary
+%
