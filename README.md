@@ -1,5 +1,5 @@
 # DS
-<h1>Way Words Are Stored in TXT file.</h1>
+<h1>Storing Words in TXT file.</h1>
 <ul>
   <li>Words are stored as <b>WORD</b> followed by its <b>MEANING</b>.</li>
   <li>Begining of a <b>WORD</b> is denoted by a <b>'&'</b> symbol.</li>
