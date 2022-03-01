@@ -1,4 +1,4 @@
-# DS
+# DS_DICTIONARY USING BST
 <h1>Storing Words in TXT file.</h1>
 <ul>
   <li>Words are stored as <b>WORD</b> followed by its <b>MEANING</b>.</li>
